@@ -1,0 +1,104 @@
+---
+# Tasks file for mariadb-RedHat
+# Actualizar caché de los paquetes
+- name: Actualizar caché de los repositorios
+  yum:
+      name: '*'
+      state: latest
+      update_cache: true
+
+# Instalar MariaDB
+- name: Instalar MariaBD
+  yum:
+      name:
+          - mariadb-server
+          - python3
+          - python3-PyMySQL
+      state: latest
+
+#Iniciar MariaDB 
+- name: Iniciar MariaDB
+  service:
+      name: mariadb
+      enabled: true
+      state: started
+
+# Cambiar contraseña a usuario root
+- name: Ejecutar mysql_secure_installation
+  shell: |
+          echo -e "\nn\nY\nViewnext\nViewnext\nY\nn\nY\nY\n" | sudo mysql_secure_installation
+  args:
+      executable: /bin/bash
+
+# Importar configuración MariaDB
+#- name: Establecer configuración
+#  template:
+#      src: /etc/ansible/recursos/mariadb/50-server-debian.cnf
+#      dest: /etc/my.cnf.d/mariadb-server.cnf
+#      owner: root
+#      group: root
+#      mode: '0755'
+
+# Reiniciar MariaDB
+- name: reinicair servicio MariaDB
+  service:
+      name: mariadb
+      state: restarted
+        
+# Crear base de dato de wordpress
+- name: Crear base de datos wordpress
+  mysql_db:
+      name: wordpress
+      login_user: root
+      login_password: Viewnext
+      state: present
+
+# Crear Usuario para la base de datos
+- name: Crear usuario para la base de datos "wordpress"
+  mysql_user:
+      login_user: root
+      login_password: Viewnext
+      name: vagrant
+      password: Viewnext
+      priv: 'wordpress.*:ALL,GRANT'
+      host: '%'
+      state: present
+
+# Crear archivo SQL
+- name: Crear el archivo SQL
+  copy:
+      content:
+        USE wordpress;
+        UPDATE wp_options SET option_value='http://192.168.10.45' WHERE option_name='siteurl'
+        OR option_name='home';
+      dest: /tmp/commands.slq
+
+# Ejecutar comandos SQL
+- name: Ejecutar comandos sql
+  mysql_db:
+      login_user: root
+      login_password: Viewnext
+      name: wordpress
+      target: /tmp/commands
+  vars:
+      ansible_python_interpreter: /usr/bin/python3
+        
+# Habilitar Firewall
+- name: Habilitar servicio mysql en firewalld
+  firewalld:
+      service: mysql
+      permanent: true
+      state: enabled
+
+# Abrir puerto 3306 en Firewall
+- name: Abrir puerto 3306 firewalld
+  firewalld:
+      port: 3306/tcp
+      permanent: true
+      state: enabled
+  
+# Recargar Firewall
+- name: Recargar la configuarción del firewall
+  systemd:
+      name: firewalld
+      state: restarted

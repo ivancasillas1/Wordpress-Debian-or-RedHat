@@ -1,0 +1,38 @@
+---
+# tasks file for backup
+# Directrio para las copias de seguridad
+- name: Crear directorio para las copias de seguridad
+  file:
+      path: /backup
+      state: directory
+      mode: '0755'
+# Fecha y hora de la copia de seguridad
+- name: Obtener fecha y hora actual
+  set_fact:
+    timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.time }}"
+# Realizar la copia de seguridad
+- name: Realizar copia de seguridad
+  mysql_db:
+      login_user: root
+      login_password: Viewnext
+      state: dump
+      name: wordpress
+      target: "/backup/wordpress_backup_{{ timestamp }}.sql"
+# Comprobación de la copia de seguridad
+- name: Comprobación de la creación del backup
+  stat:
+    path: "/backup/wordpress_backup_{{ timestamp }}.sql"
+  register: result
+  # Exportar backup
+- name: Exportar copia de seguridad a host
+  template:
+      src: /etc/ansible/recursos/mariadb/backup_wordpress.sql
+      dest: /backup/backup_wordpress.sql
+# Restauración de la base de datos
+- name: Restaurar base de datos
+  mysql_db:
+          login_user: vagrant
+          login_password: Viewnext
+          name: wordpress
+          state: import
+          target: /backup/backup_wordpress.sql

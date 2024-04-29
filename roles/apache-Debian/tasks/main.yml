@@ -1,0 +1,47 @@
+---
+# tasks file for apache-Debian
+# --------------------------------------Instalación Apache Debian----------------------------------
+- name: Instalación Apache y configuración.
+  apt:
+      name: apache2
+      state: latest
+# Iniciar Servicio Apache
+- name: Iniciar servicio Apache2
+  service:
+        name: apache2
+        state: started
+# Abrir puertos firewall
+- name: Instalar uwf
+  apt:
+        name: ufw
+        state: present
+
+# Habilitar servicio ufw
+- name: Hablitar servicio ufw
+  ufw:
+        state: enabled
+
+# Abrir puerto 80
+- name: Abrir puerto 80
+  ufw:
+        rule: allow
+        port: "80"
+# habilitar puerto 443
+- name: Abrir puerto 433
+  ufw:
+        rule: allow
+        port: "433"
+# Habilitar puerto 22
+- name: Habilitar puerto 22
+  ufw:
+        rule: allow
+        port: "22"
+# Reiniciar firewall
+- name: Reiniciar firewall
+  ufw:
+        state: reloaded
+# Reiniciar apache
+- name: Reiniciar servicio Apache2
+  service:
+        name: apache2
+        state: restarted

@@ -1,0 +1,91 @@
+---
+# tasks file for php-RedHat
+# Actualizar caché pquetes
+- name: Actualizar caché de los repositorios
+  yum:
+      name: '*'
+      state: latest
+      update_cache: true
+
+# Instalar paquetes necesario
+- name: Instalación paquetes necesarios
+  yum:
+        name:
+            - php
+            - httpd
+            - php-cli
+            - php-fpm
+            - php-mysqlnd
+            - php-zip
+            - php-devel
+            - php-gd
+            - php-mcrypt
+            - php-mbstring
+            - php-curl
+            - php-xml
+            - php-pear
+            - php-bcmath
+        state: latest
+
+# Reiniciar modulo php-fmp
+- name:  Reiniciar módulo php-fpm
+  service:
+        name: php-fpm
+        state: restarted
+  when: ansible_facts['services']['php-fpm'] is defined
+
+# Abrir puerto firewall para http
+- name: Abrir puerto para servicio http
+  firewalld:
+        service: http
+        permanent: true
+        state: enabled
+
+# copiar ficheros wordpress para instalación
+- name: Copiar ficheros wordpress
+  unarchive:
+        src: https://wordpress.org/latest.tar.gz
+        dest: /var/www/html
+        remote_src: yes
+        owner: apache
+        group: apache
+        mode: '0755'
+
+# Establecer configuración de wordpress
+- name: Establecer configuración wordpress
+  template:
+        src: /etc/ansible/recursos/wordpress/wp-config.php
+        dest: /var/www/html/wordpress/wp-config.php
+        owner: root
+        group: root
+        mode: '0644'
+
+# Importar archivo wordpress.conf
+- name: Importar archivo wordpress.conf(proxy)
+  template:
+        src: /etc/ansible/recursos/wordpress/wordpress.conf
+        dest: /etc/httpd/conf.d/wordpress.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+# Reiniciar servicio Apache Web Server
+- name: Reiniciar Apache web Server
+  service:
+        name: httpd
+        state: restarted
+
+# Deshabilitar módulo SELinux
+- name: Deshabilitar módule SELinux
+  template:
+        src: /etc/ansible/recursos/selinux/config
+        dest: /etc/selinux/config
+        owner: root
+        group: root
+        mode: '0644'
+
+# Reiniciar servidor
+- name: Reiniciar servidor
+  reboot:
+      reboot_timeout: 60
+      post_reboot_delay: 30
