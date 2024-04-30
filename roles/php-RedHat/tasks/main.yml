@@ -54,7 +54,7 @@
 # Establecer configuración de wordpress
 - name: Establecer configuración wordpress
   template:
-        src: /etc/ansible/recursos/wordpress/wp-config.php
+        src: /etc/ansible/recursos/wordpress/wp-config.php.j2
         dest: /var/www/html/wordpress/wp-config.php
         owner: root
         group: root
@@ -63,7 +63,7 @@
 # Importar archivo wordpress.conf
 - name: Importar archivo wordpress.conf(proxy)
   template:
-        src: /etc/ansible/recursos/wordpress/wordpress.conf
+        src: /etc/ansible/recursos/wordpress/wordpress.conf.j2
         dest: /etc/httpd/conf.d/wordpress.conf
         owner: root
         group: root
