@@ -56,7 +56,7 @@
 # Estabalcer configuración wp-config.php
 - name: Establecer configuración wp-config.php
   template:
-    src: /etc/ansible/recursos/wordpress/wp-config.php.j2
+    src: /etc/ansible/recursos/wordpress/wp-config.php
     dest: /var/www/html/wordpress/wp-config.php
     owner: www-data
     group: www-data
