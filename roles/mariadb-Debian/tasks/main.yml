@@ -19,7 +19,7 @@
 
 # Iniciar servicio MariaDB
  - name: Iniciar servicio MariaDB
-  service:
+   service:
       name: mariadb
       enabled: true
       state: started
