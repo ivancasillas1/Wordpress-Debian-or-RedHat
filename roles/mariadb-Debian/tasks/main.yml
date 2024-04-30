@@ -73,23 +73,23 @@
       state: present
 
 # Crear archivo SQL
-- name: Crear el archivo SQL
-  copy:
-      content:
-        USE wordpress;
-        UPDATE wp_options SET option_value='http://192.168.10.45' WHERE option_name='siteurl'
-        OR option_name='home';
-      dest: /tmp/commands.slq
+# - name: Crear el archivo SQL
+#   copy:
+#       content:
+#         USE wordpress;
+#         UPDATE wp_options SET option_value='http://192.168.10.45' WHERE option_name='siteurl'
+#         OR option_name='home';
+#       dest: /tmp/commands.slq
 
 # Ejecutar comandos SQL
-- name: Ejecutar comandos sql
-  mysql_db:
-      login_user: root
-      login_password: Viewnext
-      name: wordpress
-      target: /tmp/commands
-  vars:
-      ansible_python_interpreter: /usr/bin/python3
+# - name: Ejecutar comandos sql
+#  mysql_db:
+#      login_user: root
+#      login_password: Viewnext
+#      name: wordpress
+#      target: /tmp/commands
+#  vars:
+#      ansible_python_interpreter: /usr/bin/python3
 
 # Habilitar MariaDB en Firewall
 - name: Habilitar servicio mariadb en firewall
