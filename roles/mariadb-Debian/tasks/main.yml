@@ -33,7 +33,7 @@
 # Secure_installation y cambio de contraseña usuraio root
 - name: Mysql-secure-installation
   shell:
-      echo -e "\nn\nY\nViewnext\nViewnext\nYnn\nY\nY\n" | sudo mysql_secure_installation
+      echo -e "\nn\nY\nViewnext\nViewnext\nY\nn\nY\nY\n" | sudo mysql_secure_installation
   args:
       executable: /bin/bash
 
