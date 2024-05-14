@@ -17,13 +17,6 @@
             - php-mbstring
             - php-mysql
         state: latest
-          
-# Reiniciar módulo php-fpm
-- name: Reiniciar módulo php.fpm
-  service:
-        name: php-fpm
-        state: restarted
-  when: ansible_facts['services']['php-fpm'] is defined
 
 # Abrir puerto para srvicio http
 # - name: Abrir puerto par servicio http
@@ -31,12 +24,12 @@
 #        service: http
 #        permanent: true
 #        state: enabled
-
+#
 # Riniciar servicio Firewall
 # - name: Reiniciar ufw
 #  ufw:
 #        state: reloaded
-#
+
 # Descargar Archivos Wordpress
 - name: Descargar wordpress
   get_url:
